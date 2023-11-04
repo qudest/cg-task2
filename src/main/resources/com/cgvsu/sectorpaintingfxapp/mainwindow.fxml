@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="anchorPane" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.cgvsu.sectorpaintingfxapp.SectorPaintingController">
-    <Canvas fx:id="canvas" width="800" height="600" AnchorPane.topAnchor="30.0"/>
+<AnchorPane fx:id="anchorPane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgvsu.sectorpaintingfxapp.SectorPaintingController">
+    <Canvas fx:id="canvas" height="600" layoutX="-3.0" layoutY="30.0" width="800" AnchorPane.topAnchor="30.0" />
+    <TitledPane expanded="false" text="input">
+        <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <TextField layoutX="75.0" onAction="#paint" prefHeight="25.0" prefWidth="115.0" promptText="xCenter" fx:id="xCenterField" />
+                <TextField fx:id="yCenterField" layoutX="75.0" layoutY="25.0" onAction="#paint" prefHeight="25.0" prefWidth="115.0" promptText="yCenter" />
+                <TextField fx:id="radiusField" layoutX="75.0" layoutY="50.0" onAction="#paint" prefHeight="25.0" prefWidth="115.0" promptText="raduis" />
+                <TextField fx:id="startAngleField" layoutX="75.0" layoutY="75.0" onAction="#paint" prefHeight="25.0" prefWidth="115.0" promptText="start angle" />
+                <TextField fx:id="lengthField" layoutX="75.0" layoutY="100.0" onAction="#paint" prefHeight="25.0" prefWidth="115.0" promptText="length" />
+                <Label layoutX="12.0" prefHeight="15.0" prefWidth="60.0" text="xCenter">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                </Label>
+                <Label layoutX="12.0" layoutY="25.0" prefHeight="15.0" prefWidth="60.0" text="yCenter">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                </Label>
+                <Label layoutX="14.0" layoutY="50.0" prefHeight="15.0" prefWidth="60.0" text="Raduis">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                </Label>
+                <Label layoutX="5.0" layoutY="78.0" prefHeight="20.0" prefWidth="74.0" text="Start angle">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+                <Label layoutX="14.0" layoutY="100.0" prefHeight="15.0" prefWidth="60.0" text="Length">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                </Label>
+                <Button layoutX="51.0" layoutY="141.0" mnemonicParsing="false" onAction="#paint" text="Paint" />
+                <Button layoutX="111.0" layoutY="141.0" mnemonicParsing="false" onAction="#clear" text="Clear" />
+            </AnchorPane>
+        </content>
+    </TitledPane>
 </AnchorPane>

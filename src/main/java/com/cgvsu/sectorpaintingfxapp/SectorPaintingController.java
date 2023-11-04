@@ -1,8 +1,9 @@
 package com.cgvsu.sectorpaintingfxapp;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.TextField;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -13,12 +14,44 @@ public class SectorPaintingController {
     AnchorPane anchorPane;
     @FXML
     private Canvas canvas;
+    @FXML
+    private TextField xCenterField;
+    @FXML
+    private TextField yCenterField;
+    @FXML
+    private TextField radiusField;
+    @FXML
+    private TextField startAngleField;
+    @FXML
+    private TextField lengthField;
+    @FXML
+    private void paint(ActionEvent event) {
+        try
+        {
+            centerX = Double.parseDouble(xCenterField.getText());
+            centerY = Double.parseDouble(yCenterField.getText());
+            radius = Double.parseDouble(radiusField.getText());
+            startAngle = Double.parseDouble(startAngleField.getText());
+            length = Double.parseDouble(lengthField.getText());
+            endAngle = startAngle + length;
+            drawSector();
+        }
+        catch (NullPointerException | NumberFormatException ex)
+        {
+        }
+    }
 
-    double centerX = 150;
-    double centerY = 150;
-    double radius = 100;
-    double startAngle = 340;
-    double length = 45;
+    @FXML
+    private void clear(ActionEvent event) {
+        if (canvas != null)
+            canvas.getGraphicsContext2D().clearRect(0,0, canvas.getWidth(), canvas.getHeight());
+    }
+
+    double centerX;
+    double centerY;
+    double radius;
+    double startAngle;
+    double length;
     double endAngle = startAngle + length;
 
     public void initialize() {
@@ -30,13 +63,12 @@ public class SectorPaintingController {
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         for (int y = (int) (centerY-radius); y < centerY+radius; y++) {
-            for (int x = (int) (centerX-radius); x < centerX+radius; x++) {
+            for (int x = (int) (centerX -radius); x < centerX +radius; x++) {
                 if (isPointInSector(x, y)) {
                     pixelWriter.setColor(x, y, Color.RED);
                 }
             }
         }
-
         canvas.getGraphicsContext2D().drawImage(writableImage, 0, 0);
     }
 
