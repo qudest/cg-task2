@@ -13,8 +13,8 @@ public class Sector {
     private double startAngle = 0;
     private double length = 0;
     private double endAngle = startAngle + length;
-    private Color startColor = Color.color(0, 0, 0);
-    private Color endColor = Color.color(0, 0, 0);
+    private Color startColor = Color.rgb(255, 0, 0);
+    private Color endColor = Color.BLUE;
 
     public Sector(double centerX, double centerY, double radius, double startAngle, double length) {
         this.centerX = centerX;
@@ -95,14 +95,13 @@ public class Sector {
     public void drawSector(Canvas canvas) {
         WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
-        double ratio = 0D;
 
         try {
             for (int y = (int) (centerY - radius); y < centerY + radius; y++) {
                 for (int x = (int) (centerX - radius); x < centerX + radius; x++) {
                     if (isPointInSector(x, y)) {
+                        double ratio = 0.008D * distance(x, y);
                         pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio));
-                        ratio += (0.009 / length);
                     }
                 }
             }
@@ -122,7 +121,7 @@ public class Sector {
             angle += 360;
         }
 
-        double distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(centerY - y, 2));
+        double dist = distance(x, y);
 
         while (startAngle < 0) {
             startAngle += 360;
@@ -136,11 +135,11 @@ public class Sector {
 
         if (endAngle > 360) {
             if (angle >= startAngle || angle <= endAngle - 360) {
-                return distance <= radius;
+                return dist <= radius;
             }
         }
 
-        return angle >= startAngle && angle <= endAngle && distance <= radius;
+        return angle >= startAngle && angle <= endAngle && dist <= radius;
     }
 
     private Color interpolate(Color startColor, Color endColor, double ratio) {
@@ -153,5 +152,9 @@ public class Sector {
         double green = (startColor.getGreen() + (endColor.getGreen() - startColor.getGreen()) * ratio);
         double blue = (startColor.getBlue() + (endColor.getBlue() - startColor.getBlue()) * ratio);
         return Color.color(red, green, blue);
+    }
+
+    private double distance(int x, int y) {
+        return Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(centerY - y, 2));
     }
 }

@@ -8,6 +8,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class SectorPaintingApplication extends Application {
+    public static void main(String[] args) {
+        launch();
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SectorPaintingApplication.class.getResource("mainwindow.fxml"));
@@ -15,9 +19,5 @@ public class SectorPaintingApplication extends Application {
         stage.setTitle("Sector Painting App");
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 }
