@@ -8,21 +8,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
 public class SectorPaintingController {
-    private final Sector sector = new Sector();
+    private final Sector sector = new Sector(300,300,100,0,90);
     @FXML
     AnchorPane anchorPane;
     @FXML
     private Canvas canvas;
     @FXML
-    private TextField xCenterField;
-    @FXML
-    private TextField yCenterField;
-    @FXML
-    private TextField radiusField;
-    @FXML
-    private TextField startAngleField;
-    @FXML
-    private TextField lengthField;
+    private TextField xCenterField, yCenterField, radiusField, startAngleField, lengthField, startRed, startGreen, startBlue, endRed, endGreen, endBlue;
     @FXML
     private void paint(ActionEvent event) {
         try
@@ -32,10 +24,12 @@ public class SectorPaintingController {
             sector.setRadius(Double.parseDouble(radiusField.getText()));
             sector.setStartAngle(Double.parseDouble(startAngleField.getText()));
             sector.setLength(Double.parseDouble(lengthField.getText()));
-            sector.setEndAngle(sector.getStartAngle()+sector.getLength());
+            sector.setEndAngle();
+            sector.setStartColor(Integer.parseInt(startRed.getText()), Integer.parseInt(startGreen.getText()), Integer.parseInt(startBlue.getText()));
+            sector.setEndColor(Integer.parseInt(endRed.getText()), Integer.parseInt(endGreen.getText()), Integer.parseInt(endBlue.getText()));
             sector.drawSector(canvas);
         }
-        catch (NullPointerException | NumberFormatException ex)
+        catch (NullPointerException | IllegalArgumentException ex)
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Incorrect input");
@@ -50,6 +44,6 @@ public class SectorPaintingController {
     }
 
     public void initialize() {
-        //sector.drawSector(canvas);
+        sector.drawSector(canvas);
     }
 }

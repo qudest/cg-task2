@@ -13,6 +13,8 @@ public class Sector {
     private double startAngle = 0;
     private double length = 0;
     private double endAngle = startAngle + length;
+    private Color startColor = Color.RED;
+    private Color endColor = Color.YELLOW;
     public Sector(double centerX, double centerY, double radius, double startAngle, double length) {
         this.centerX = centerX;
         this.centerY = centerY;
@@ -22,10 +24,26 @@ public class Sector {
         this.endAngle = startAngle + length;
     }
     public Sector() {}
+
+    public Color getStartColor() {
+        return startColor;
+    }
+
+    public void setStartColor(int r, int g, int b) {
+        this.startColor = Color.rgb(r, g, b);
+    }
+
+    public Color getEndColor() {
+        return endColor;
+    }
+
+    public void setEndColor(int r, int g, int b) {
+        this.endColor = Color.rgb(r, g, b);
+    }
+
     public double getCenterX() {
         return centerX;
     }
-
     public void setCenterX(double centerX) {
         this.centerX = centerX;
     }
@@ -66,19 +84,21 @@ public class Sector {
         return endAngle;
     }
 
-    public void setEndAngle(double endAngle) {
-        this.endAngle = endAngle;
+    public void setEndAngle() {
+        this.endAngle = startAngle + length;
     }
 
     public void drawSector(Canvas canvas) {
         WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
+        double ratio = 0D;
 
         try {
             for (int y = (int) (centerY-radius); y < centerY+radius; y++) {
-                for (int x = (int) (centerX -radius); x < centerX +radius; x++) {
+                for (int x = (int) (centerX-radius); x < centerX+radius; x++) {
                     if (isPointInSector(x, y)) {
-                        pixelWriter.setColor(x, y, Color.RED);
+                        pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio));
+                        ratio += (0.009 / length);
                     }
                 }
             }
@@ -114,5 +134,17 @@ public class Sector {
         }
 
         return angle >= startAngle && angle <= endAngle && distance <= radius;
+    }
+
+    private Color interpolate(Color startColor, Color endColor, double ratio) {
+        if (ratio <= 0.0) {
+            return startColor;
+        } else if (ratio >= 1.0) {
+            return endColor;
+        }
+        double red = (startColor.getRed() + (endColor.getRed() - startColor.getRed()) * ratio);
+        double green = (startColor.getGreen() + (endColor.getGreen() - startColor.getGreen()) * ratio);
+        double blue = (startColor.getBlue() + (endColor.getBlue() - startColor.getBlue()) * ratio);
+        return Color.color(red, green, blue);
     }
 }
