@@ -13,8 +13,9 @@ public class Sector {
     private double startAngle = 0;
     private double length = 0;
     private double endAngle = startAngle + length;
-    private Color startColor = Color.RED;
-    private Color endColor = Color.YELLOW;
+    private Color startColor = Color.color(0, 0, 0);
+    private Color endColor = Color.color(0, 0, 0);
+
     public Sector(double centerX, double centerY, double radius, double startAngle, double length) {
         this.centerX = centerX;
         this.centerY = centerY;
@@ -23,7 +24,9 @@ public class Sector {
         this.length = length;
         this.endAngle = startAngle + length;
     }
-    public Sector() {}
+
+    public Sector() {
+    }
 
     public Color getStartColor() {
         return startColor;
@@ -44,6 +47,7 @@ public class Sector {
     public double getCenterX() {
         return centerX;
     }
+
     public void setCenterX(double centerX) {
         this.centerX = centerX;
     }
@@ -94,8 +98,8 @@ public class Sector {
         double ratio = 0D;
 
         try {
-            for (int y = (int) (centerY-radius); y < centerY+radius; y++) {
-                for (int x = (int) (centerX-radius); x < centerX+radius; x++) {
+            for (int y = (int) (centerY - radius); y < centerY + radius; y++) {
+                for (int x = (int) (centerX - radius); x < centerX + radius; x++) {
                     if (isPointInSector(x, y)) {
                         pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio));
                         ratio += (0.009 / length);
@@ -113,20 +117,23 @@ public class Sector {
     }
 
     private boolean isPointInSector(int x, int y) {
-        double angle = Math.toDegrees(Math.atan2(y - centerY, x - centerX));
+        double angle = Math.toDegrees(Math.atan2(centerY - y, x - centerX));
         if (angle < 0) {
             angle += 360;
         }
 
-        double distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+        double distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(centerY - y, 2));
 
-        // Корректировка углов для обеспечения правильного диапазона от 0 до 360 градусов
-        if (startAngle > 360) {
-            startAngle %= 360;
-            endAngle = (startAngle + length) % 360;
+        while (startAngle < 0) {
+            startAngle += 360;
+            endAngle = startAngle + length;
         }
 
-        // Проверка на переход через 360 градусов
+        if (startAngle > 360) {
+            startAngle %= 360;
+            endAngle = startAngle + length;
+        }
+
         if (endAngle > 360) {
             if (angle >= startAngle || angle <= endAngle - 360) {
                 return distance <= radius;

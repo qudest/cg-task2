@@ -1,6 +1,5 @@
 package com.cgvsu.sectorpaintingfxapp;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
@@ -8,7 +7,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
 public class SectorPaintingController {
-    private final Sector sector = new Sector(300,300,100,0,90);
+    private final Sector sector = new Sector();
+    private final Sector[] testSectors = new Sector[]{
+            new Sector(150,200,100,0,90),
+            new Sector(400,200,100,90,90),
+            new Sector(550,100,100,180,90),
+            new Sector(600,100,100,270,90),
+            new Sector(250, 350, 100, 135, 45),
+            new Sector(350, 350, 100, 90, 45),
+            new Sector(450, 350, 100, 45, 45),
+            new Sector(550, 350, 100, 0, 45)
+
+
+    };
+
     @FXML
     AnchorPane anchorPane;
     @FXML
@@ -16,7 +28,7 @@ public class SectorPaintingController {
     @FXML
     private TextField xCenterField, yCenterField, radiusField, startAngleField, lengthField, startRed, startGreen, startBlue, endRed, endGreen, endBlue;
     @FXML
-    private void paint(ActionEvent event) {
+    private void paint() {
         try
         {
             sector.setCenterX(Double.parseDouble(xCenterField.getText()));
@@ -38,12 +50,14 @@ public class SectorPaintingController {
         }
     }
     @FXML
-    private void clear(ActionEvent event) {
+    private void clear() {
         if (canvas != null)
             canvas.getGraphicsContext2D().clearRect(0,0, canvas.getWidth(), canvas.getHeight());
     }
 
     public void initialize() {
-        sector.drawSector(canvas);
+        for (Sector sector: testSectors) {
+            sector.drawSector(canvas);
+        }
     }
 }
