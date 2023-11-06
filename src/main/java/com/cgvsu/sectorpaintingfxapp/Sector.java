@@ -7,16 +7,16 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 public class Sector {
-    private double centerX = 0;
-    private double centerY = 0;
-    private double radius = 0;
+    private int centerX = 0;
+    private int centerY = 0;
+    private int radius = 0;
     private double startAngle = 0;
     private double length = 0;
-    private double endAngle = startAngle + length;
-    private Color startColor = Color.rgb(255, 0, 0);
+    private double endAngle = 0;
+    private Color startColor = Color.RED;
     private Color endColor = Color.BLUE;
 
-    public Sector(double centerX, double centerY, double radius, double startAngle, double length) {
+    public Sector(int centerX, int centerY, int radius, double startAngle, double length) {
         this.centerX = centerX;
         this.centerY = centerY;
         this.radius = radius;
@@ -48,7 +48,7 @@ public class Sector {
         return centerX;
     }
 
-    public void setCenterX(double centerX) {
+    public void setCenterX(int centerX) {
         this.centerX = centerX;
     }
 
@@ -56,7 +56,7 @@ public class Sector {
         return centerY;
     }
 
-    public void setCenterY(double centerY) {
+    public void setCenterY(int centerY) {
         this.centerY = centerY;
     }
 
@@ -64,7 +64,7 @@ public class Sector {
         return radius;
     }
 
-    public void setRadius(double radius) {
+    public void setRadius(int radius) {
         this.radius = radius;
     }
 
@@ -74,6 +74,7 @@ public class Sector {
 
     public void setStartAngle(double startAngle) {
         this.startAngle = startAngle;
+        this.endAngle = startAngle + length;
     }
 
     public double getLength() {
@@ -82,14 +83,11 @@ public class Sector {
 
     public void setLength(double length) {
         this.length = length;
+        this.endAngle = startAngle + length;
     }
 
     public double getEndAngle() {
         return endAngle;
-    }
-
-    public void setEndAngle() {
-        this.endAngle = startAngle + length;
     }
 
     public void drawSector(Canvas canvas) {
@@ -97,15 +95,15 @@ public class Sector {
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
         try {
-            for (int y = (int) (centerY - radius); y < centerY + radius; y++) {
-                for (int x = (int) (centerX - radius); x < centerX + radius; x++) {
+            for (int y = centerY - radius; y < centerY + radius; y++) {
+                for (int x = centerX - radius; x < centerX + radius; x++) {
                     if (isPointInSector(x, y)) {
-                        double ratio = 0.008D * distance(x, y);
+                        double ratio = distance(x, y); // сделать что то с константой
                         pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio));
                     }
                 }
             }
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ex) { // убрать
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Sector outside the canvas");
             alert.setContentText("Sector outside the canvas!");
@@ -139,6 +137,10 @@ public class Sector {
             }
         }
 
+        if (x == centerX && y == centerY) {
+            return true;
+        }
+
         return angle >= startAngle && angle <= endAngle && dist <= radius;
     }
 
@@ -154,7 +156,7 @@ public class Sector {
         return Color.color(red, green, blue);
     }
 
-    private double distance(int x, int y) {
-        return Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(centerY - y, 2));
+    private int distance(int x, int y) {
+        return (int) Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(centerY - y, 2));
     }
 }

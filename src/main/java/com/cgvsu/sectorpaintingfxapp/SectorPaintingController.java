@@ -11,12 +11,12 @@ public class SectorPaintingController {
     private final Sector[] testSectors = new Sector[]{
             new Sector(150, 200, 100, 0, 90),
             new Sector(400, 200, 100, 90, 90),
-            new Sector(550, 100, 100, 180, 90),
-            new Sector(600, 100, 100, 270, 90),
-            new Sector(250, 350, 100, 135, 45),
-            new Sector(350, 350, 100, 90, 45),
-            new Sector(450, 350, 100, 45, 45),
-            new Sector(550, 350, 100, 0, 45)
+            new Sector(550, 100, 120, 180, 90),
+            new Sector(600, 100, 130, 270, 90),
+            new Sector(250, 350, 140, 135, 45),
+            new Sector(350, 350, 150, 90, 45),
+            new Sector(450, 350, 160, 45, 45),
+            new Sector(550, 350, 170, 0, 45)
 
 
     };
@@ -31,12 +31,11 @@ public class SectorPaintingController {
     @FXML
     private void paint() {
         try {
-            sector.setCenterX(Double.parseDouble(xCenterField.getText()));
-            sector.setCenterY(Double.parseDouble(yCenterField.getText()));
-            sector.setRadius(Double.parseDouble(radiusField.getText()));
+            sector.setCenterX(Integer.parseInt(xCenterField.getText()));
+            sector.setCenterY(Integer.parseInt(yCenterField.getText()));
+            sector.setRadius(Integer.parseInt(radiusField.getText()));
             sector.setStartAngle(Double.parseDouble(startAngleField.getText()));
             sector.setLength(Double.parseDouble(lengthField.getText()));
-            sector.setEndAngle();
             sector.setStartColor(Integer.parseInt(startRed.getText()), Integer.parseInt(startGreen.getText()), Integer.parseInt(startBlue.getText()));
             sector.setEndColor(Integer.parseInt(endRed.getText()), Integer.parseInt(endGreen.getText()), Integer.parseInt(endBlue.getText()));
             sector.drawSector(canvas);
