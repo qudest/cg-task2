@@ -9,16 +9,14 @@ import javafx.scene.layout.AnchorPane;
 public class SectorPaintingController {
     private final Sector sector = new Sector();
     private final Sector[] testSectors = new Sector[]{
-            new Sector(150, 200, 100, 0, 90),
-            new Sector(400, 200, 100, 90, 90),
-            new Sector(550, 100, 120, 180, 90),
-            new Sector(600, 100, 130, 270, 90),
-            new Sector(250, 350, 140, 135, 45),
-            new Sector(350, 350, 150, 90, 45),
-            new Sector(450, 350, 160, 45, 45),
-            new Sector(550, 350, 170, 0, 45)
-
-
+            new Sector(150, 200, 100, Math.toRadians(0), Math.toRadians(90)),
+            new Sector(400, 200, 100, Math.toRadians(90), Math.toRadians(90)),
+            new Sector(550, 100, 100,  Math.toRadians(180), Math.toRadians(90)),
+            new Sector(600, 100, 100,  Math.toRadians(270), Math.toRadians(90)),
+            new Sector(250, 350, 100,  Math.toRadians(135), Math.toRadians(45)),
+            new Sector(350, 350, 100,  Math.toRadians(90), Math.toRadians(45)),
+            new Sector(450, 350, 100,  Math.toRadians(45), Math.toRadians(45)),
+            new Sector(550, 350, 100,  Math.toRadians(0), Math.toRadians(45))
     };
 
     @FXML
@@ -34,8 +32,8 @@ public class SectorPaintingController {
             sector.setCenterX(Integer.parseInt(xCenterField.getText()));
             sector.setCenterY(Integer.parseInt(yCenterField.getText()));
             sector.setRadius(Integer.parseInt(radiusField.getText()));
-            sector.setStartAngle(Double.parseDouble(startAngleField.getText()));
-            sector.setLength(Double.parseDouble(lengthField.getText()));
+            sector.setStartAngle(Math.toRadians(Double.parseDouble(startAngleField.getText())));
+            sector.setLength(Math.toRadians(Double.parseDouble(lengthField.getText())));
             sector.setStartColor(Integer.parseInt(startRed.getText()), Integer.parseInt(startGreen.getText()), Integer.parseInt(startBlue.getText()));
             sector.setEndColor(Integer.parseInt(endRed.getText()), Integer.parseInt(endGreen.getText()), Integer.parseInt(endBlue.getText()));
             sector.drawSector(canvas);

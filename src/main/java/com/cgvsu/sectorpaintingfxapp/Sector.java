@@ -1,7 +1,6 @@
 package com.cgvsu.sectorpaintingfxapp;
 
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Alert;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -94,57 +93,53 @@ public class Sector {
         WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        try {
-            for (int y = centerY - radius; y < centerY + radius; y++) {
-                for (int x = centerX - radius; x < centerX + radius; x++) {
-                    if (isPointInSector(x, y)) {
-                        double ratio = distance(x, y); // сделать что то с константой
-                        pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio));
-                    }
+        for (int y = centerY - radius; y <= centerY + radius; y++) {
+            for (int x = centerX - radius; x <= centerX + radius; x++) {
+                if (isPointInSector(x, y, canvas)) {
+                    double ratio = (distance(x, y) / (double) radius) * 0.8;
+                    pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio,1));
                 }
             }
-        } catch (IndexOutOfBoundsException ex) { // убрать
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Sector outside the canvas");
-            alert.setContentText("Sector outside the canvas!");
-            alert.showAndWait();
-            return;
         }
         canvas.getGraphicsContext2D().drawImage(writableImage, 0, 0);
     }
 
-    private boolean isPointInSector(int x, int y) {
-        double angle = Math.toDegrees(Math.atan2(centerY - y, x - centerX));
-        if (angle < 0) {
-            angle += 360;
+    private boolean isPointInSector(int x, int y, Canvas canvas) {
+        if (x < 0 || y < 0 || x >= canvas.getWidth() || y >= canvas.getHeight()) {
+            return false;
         }
 
+        if (y == centerY && x == centerX) {
+            return true;
+        }
+
+        double angle = Math.atan2(centerY - y, x - centerX);
         double dist = distance(x, y);
 
+        if (angle < 0) {
+            angle += 2 * Math.PI;
+        }
+
         while (startAngle < 0) {
-            startAngle += 360;
+            startAngle += 2 * Math.PI;
             endAngle = startAngle + length;
         }
 
-        if (startAngle > 360) {
-            startAngle %= 360;
+        if (startAngle > 2 * Math.PI) {
+            startAngle %= 2 * Math.PI;
             endAngle = startAngle + length;
         }
 
-        if (endAngle > 360) {
-            if (angle >= startAngle || angle <= endAngle - 360) {
+        if (endAngle >= 2 * Math.PI) {
+            if (angle >= startAngle || angle <= endAngle - 2 * Math.PI) {
                 return dist <= radius;
             }
-        }
-
-        if (x == centerX && y == centerY) {
-            return true;
         }
 
         return angle >= startAngle && angle <= endAngle && dist <= radius;
     }
 
-    private Color interpolate(Color startColor, Color endColor, double ratio) {
+    private Color interpolate(Color startColor, Color endColor, double ratio, double alpha) {
         if (ratio <= 0.0) {
             return startColor;
         } else if (ratio >= 1.0) {
@@ -153,7 +148,7 @@ public class Sector {
         double red = (startColor.getRed() + (endColor.getRed() - startColor.getRed()) * ratio);
         double green = (startColor.getGreen() + (endColor.getGreen() - startColor.getGreen()) * ratio);
         double blue = (startColor.getBlue() + (endColor.getBlue() - startColor.getBlue()) * ratio);
-        return Color.color(red, green, blue);
+        return Color.color(red, green, blue, alpha);
     }
 
     private int distance(int x, int y) {
