@@ -93,11 +93,13 @@ public class Sector {
         WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        for (int y = centerY - radius; y <= centerY + radius; y++) {
-            for (int x = centerX - radius; x <= centerX + radius; x++) {
+        for (int y = centerY - radius; y < centerY + radius; y++) {
+            int x_left = (int) (centerX - Math.sqrt(radius * radius - Math.pow((y - centerY), 2)));
+            int x_right = (int) (centerX + Math.sqrt(radius * radius - Math.pow((y - centerY), 2)));
+            for (int x = x_left; x < x_right; x++) {
                 if (isPointInSector(x, y, canvas)) {
                     double ratio = (distance(x, y) / (double) radius) * 0.8;
-                    pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio,1));
+                    pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio));
                 }
             }
         }
@@ -109,37 +111,34 @@ public class Sector {
             return false;
         }
 
-        if (y == centerY && x == centerX) {
-            return true;
-        }
+        Point O = new Point(centerX, centerY);
+        Point P = new Point(x, y);
+        Point A = new Point((int) (centerX - radius * Math.cos(startAngle)), (int) (centerY + radius * Math.sin(startAngle)));
+        Point B = new Point((int) (centerX - radius * Math.cos(endAngle)), (int) (centerY + radius * Math.sin(endAngle)));
 
-        double angle = Math.atan2(centerY - y, x - centerX);
-        double dist = distance(x, y);
+        Vector2D OP = new Vector2D(P.getX() - O.getX(), P.getY() - O.getY());
+        Vector2D OA = new Vector2D(A.getX() - O.getX(), A.getY() - O.getY());
+        Vector2D OB = new Vector2D(B.getX() - O.getX(), B.getY() - O.getY());
 
-        if (angle < 0) {
-            angle += 2 * Math.PI;
-        }
+        double Mz = (OA.getX() * OP.getY() - OA.getY() * OP.getX());
+        double Nz = (OP.getX() * OB.getY() - OP.getY() * OB.getX());
 
-        while (startAngle < 0) {
-            startAngle += 2 * Math.PI;
-            endAngle = startAngle + length;
-        }
+        // (aX*bY − aYb*X)
 
-        if (startAngle > 2 * Math.PI) {
-            startAngle %= 2 * Math.PI;
-            endAngle = startAngle + length;
-        }
+        // M⃗ = OA⃗ × OP⃗
+        // N⃗ = OP⃗ × OB
 
-        if (endAngle >= 2 * Math.PI) {
-            if (angle >= startAngle || angle <= endAngle - 2 * Math.PI) {
-                return dist <= radius;
-            }
-        }
+        // OP = {Px - Ox, Py - Oy} == b
+        // OA = {Ax - Ox, Ay - Oy} == a
 
-        return angle >= startAngle && angle <= endAngle && dist <= radius;
+        // OP = {Px - Ox, Py - Oy} == a
+        // OB = {Bx - Ox, By - Oy == b
+
+
+        return Mz >= 0 && Nz >= 0 || Mz <= 0 && Nz <= 0;
     }
 
-    private Color interpolate(Color startColor, Color endColor, double ratio, double alpha) {
+    private Color interpolate(Color startColor, Color endColor, double ratio) {
         if (ratio <= 0.0) {
             return startColor;
         } else if (ratio >= 1.0) {
@@ -148,7 +147,7 @@ public class Sector {
         double red = (startColor.getRed() + (endColor.getRed() - startColor.getRed()) * ratio);
         double green = (startColor.getGreen() + (endColor.getGreen() - startColor.getGreen()) * ratio);
         double blue = (startColor.getBlue() + (endColor.getBlue() - startColor.getBlue()) * ratio);
-        return Color.color(red, green, blue, alpha);
+        return Color.color(red, green, blue);
     }
 
     private int distance(int x, int y) {

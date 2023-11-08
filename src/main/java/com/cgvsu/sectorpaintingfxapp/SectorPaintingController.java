@@ -9,14 +9,15 @@ import javafx.scene.layout.AnchorPane;
 public class SectorPaintingController {
     private final Sector sector = new Sector();
     private final Sector[] testSectors = new Sector[]{
-            new Sector(150, 200, 100, Math.toRadians(0), Math.toRadians(90)),
-            new Sector(400, 200, 100, Math.toRadians(90), Math.toRadians(90)),
-            new Sector(550, 100, 100,  Math.toRadians(180), Math.toRadians(90)),
-            new Sector(600, 100, 100,  Math.toRadians(270), Math.toRadians(90)),
-            new Sector(250, 350, 100,  Math.toRadians(135), Math.toRadians(45)),
-            new Sector(350, 350, 100,  Math.toRadians(90), Math.toRadians(45)),
-            new Sector(450, 350, 100,  Math.toRadians(45), Math.toRadians(45)),
-            new Sector(550, 350, 100,  Math.toRadians(0), Math.toRadians(45))
+            new Sector(300, 200, 100, Math.toRadians(0), Math.toRadians(60)),
+            //new Sector(200, 200, 100, Math.toRadians(0), Math.toRadians(90)),
+            //new Sector(400, 200, 100, Math.toRadians(90), Math.toRadians(90)),
+            //new Sector(550, 100, 100,  Math.toRadians(180), Math.toRadians(90)),
+            //new Sector(600, 100, 100,  Math.toRadians(270), Math.toRadians(90)),
+            //new Sector(250, 350, 100,  Math.toRadians(135), Math.toRadians(45)),
+            //new Sector(350, 350, 100,  Math.toRadians(90), Math.toRadians(45)),
+            //new Sector(450, 350, 100,  Math.toRadians(45), Math.toRadians(45)),
+            //new Sector(550, 350, 100,  Math.toRadians(0), Math.toRadians(45))
     };
 
     @FXML
