@@ -1,27 +1,31 @@
 package com.cgvsu.sectorpaintingfxapp;
 
 public class Vector2D {
-    private int x;
-    private int y;
+    private double x;
+    private double y;
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
-    public Vector2D(int x, int y) {
+    public Vector2D(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public static double crossProduct(Vector2D v1, Vector2D v2) {
+        return v1.x * v2.y - v1.y * v2.x;
     }
 }

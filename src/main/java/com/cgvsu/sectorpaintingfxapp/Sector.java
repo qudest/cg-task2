@@ -1,6 +1,7 @@
 package com.cgvsu.sectorpaintingfxapp;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -93,49 +94,52 @@ public class Sector {
         WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
         PixelWriter pixelWriter = writableImage.getPixelWriter();
 
-        for (int y = centerY - radius; y < centerY + radius; y++) {
-            int x_left = (int) (centerX - Math.sqrt(radius * radius - Math.pow((y - centerY), 2)));
-            int x_right = (int) (centerX + Math.sqrt(radius * radius - Math.pow((y - centerY), 2)));
-            for (int x = x_left; x < x_right; x++) {
-                if (isPointInSector(x, y, canvas)) {
+        if (length <= 0) {
+            return;
+        } else if (length <= Math.PI) {
+            draw(pixelWriter, canvas, startAngle, endAngle);
+        } else {
+            draw(pixelWriter, canvas, startAngle, startAngle + Math.PI);
+            draw(pixelWriter, canvas, startAngle + Math.PI, endAngle);
+        }
+
+        canvas.getGraphicsContext2D().drawImage(writableImage, 0, 0);
+    }
+
+    private void draw(PixelWriter pixelWriter, Canvas canvas, double startAngle, double endAngle) {
+        for (int y = centerY - radius; y <= centerY + radius; y++) {
+            int x_left = (int) Math.round(centerX - Math.sqrt(radius * radius - Math.pow((y - centerY), 2)));
+            int x_right = (int) Math.round(centerX + Math.sqrt(radius * radius - Math.pow((y - centerY), 2)));
+            for (int x = x_left; x <= x_right ; x++) {
+                if (isPointInSector(x, y, canvas, startAngle, endAngle)) {
                     double ratio = (distance(x, y) / (double) radius) * 0.8;
                     pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio));
                 }
             }
         }
-        canvas.getGraphicsContext2D().drawImage(writableImage, 0, 0);
     }
 
-    private boolean isPointInSector(int x, int y, Canvas canvas) {
+    private boolean isPointInSector(double x, double y, Canvas canvas, double startAngle, double endAngle) {
         if (x < 0 || y < 0 || x >= canvas.getWidth() || y >= canvas.getHeight()) {
             return false;
         }
 
         Point O = new Point(centerX, centerY);
         Point P = new Point(x, y);
-        Point A = new Point((int) (centerX - radius * Math.cos(startAngle)), (int) (centerY + radius * Math.sin(startAngle)));
-        Point B = new Point((int) (centerX - radius * Math.cos(endAngle)), (int) (centerY + radius * Math.sin(endAngle)));
+        Point A = new Point((centerX - radius * Math.cos(startAngle)), (centerY + radius * Math.sin(startAngle)));
+        Point B = new Point((centerX - radius * Math.cos(endAngle)), (centerY + radius * Math.sin(endAngle)));
 
         Vector2D OP = new Vector2D(P.getX() - O.getX(), P.getY() - O.getY());
         Vector2D OA = new Vector2D(A.getX() - O.getX(), A.getY() - O.getY());
         Vector2D OB = new Vector2D(B.getX() - O.getX(), B.getY() - O.getY());
 
-        double Mz = (OA.getX() * OP.getY() - OA.getY() * OP.getX());
-        double Nz = (OP.getX() * OB.getY() - OP.getY() * OB.getX());
-
-        // (aX*bY − aYb*X)
+        double M = Vector2D.crossProduct(OA, OP);
+        double N = Vector2D.crossProduct(OP, OB);
 
         // M⃗ = OA⃗ × OP⃗
         // N⃗ = OP⃗ × OB
 
-        // OP = {Px - Ox, Py - Oy} == b
-        // OA = {Ax - Ox, Ay - Oy} == a
-
-        // OP = {Px - Ox, Py - Oy} == a
-        // OB = {Bx - Ox, By - Oy == b
-
-
-        return Mz >= 0 && Nz >= 0 || Mz <= 0 && Nz <= 0;
+        return M >= 0 && N >= 0;
     }
 
     private Color interpolate(Color startColor, Color endColor, double ratio) {
