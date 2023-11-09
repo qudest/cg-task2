@@ -1,7 +1,6 @@
 package com.cgvsu.sectorpaintingfxapp;
 
 import javafx.scene.canvas.Canvas;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -110,10 +109,9 @@ public class Sector {
         for (int y = centerY - radius; y <= centerY + radius; y++) {
             int x_left = (int) Math.round(centerX - Math.sqrt(radius * radius - Math.pow((y - centerY), 2)));
             int x_right = (int) Math.round(centerX + Math.sqrt(radius * radius - Math.pow((y - centerY), 2)));
-            for (int x = x_left; x <= x_right ; x++) {
+            for (int x = x_left; x <= x_right; x++) {
                 if (isPointInSector(x, y, canvas, startAngle, endAngle)) {
-                    double ratio = (distance(x, y) / (double) radius) * 0.8;
-                    pixelWriter.setColor(x, y, interpolate(startColor, endColor, ratio));
+                    pixelWriter.setColor(x, y, interpolate(startColor, endColor, x, y));
                 }
             }
         }
@@ -142,19 +140,14 @@ public class Sector {
         return M >= 0 && N >= 0;
     }
 
-    private Color interpolate(Color startColor, Color endColor, double ratio) {
-        if (ratio <= 0.0) {
-            return startColor;
-        } else if (ratio >= 1.0) {
-            return endColor;
-        }
-        double red = (startColor.getRed() + (endColor.getRed() - startColor.getRed()) * ratio);
-        double green = (startColor.getGreen() + (endColor.getGreen() - startColor.getGreen()) * ratio);
-        double blue = (startColor.getBlue() + (endColor.getBlue() - startColor.getBlue()) * ratio);
+    private Color interpolate(Color startColor, Color endColor, int x, int y) {
+        double red = (startColor.getRed() + (endColor.getRed() - startColor.getRed()) * distance(x,y) / radius * 0.8);
+        double green = (startColor.getGreen() + (endColor.getGreen() - startColor.getGreen()) * distance(x,y) / radius * 0.8);
+        double blue = (startColor.getBlue() + (endColor.getBlue() - startColor.getBlue()) * distance(x,y) / radius * 0.8);
         return Color.color(red, green, blue);
     }
 
-    private int distance(int x, int y) {
-        return (int) Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(centerY - y, 2));
+    private double distance(int x, int y) {
+        return Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(centerY - y, 2));
     }
 }
